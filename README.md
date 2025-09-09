@@ -110,7 +110,7 @@ TROUBLESHOOTING
 SECURITY TIPS
 --------------------------
 
-• Keep config.json private — it contains your Reddit credentials
+• Keep config.json private, it contains your Reddit credentials
 
 --------------------------
 NEED HELP?
