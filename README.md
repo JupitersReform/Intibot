@@ -71,12 +71,14 @@ After the command options are given, it should be able to run just by launching 
 COMMAND-LINE OPTIONS
 --------------------------
 
+```
   -p, --id            Reddit post ID (from the URL)
   -m, --minimum       Minimum vibration intensity (0.0 to 1.0)
   -u, --max-upvotes   Upvotes required to hit max intensity
   -k, --keywords      Comma-separated keyword triggers that'll activate an intensity multiplier (e.g., 'knot,choke,gock')
   -x, --multiplier    Intensity multiplier when a keyword is detected (e.g., 1.5)
   -r, --reset         Reset saved settings
+```
 
 The bot remembers your last used settings unless you use --reset.
 
