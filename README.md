@@ -116,4 +116,4 @@ SECURITY TIPS
 NEED HELP?
 --------------------------
 
-Ask the person who gave you the bot or open an issue on the project on GitHub
+Open an issue on the project on GitHub
