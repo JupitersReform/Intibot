@@ -15,12 +15,12 @@ def load_config():
 
 config = load_config()
 
-# ====== CONFIGURATION ======
+# Configs
 CACHE_FILE = "settings_cache.json"
 VIBRATION_DURATION = 2.0
 BUTTPLUG_SERVER_URL = "ws://localhost:12345"
 
-# ====== ARGUMENT PARSING ======
+# Argument Parsing
 parser = argparse.ArgumentParser(description="Run the Reddit Buttplug Bot.")
 
 parser.add_argument('-p', '--id', type=str,
@@ -43,7 +43,7 @@ parser.add_argument('-x', '--multiplier', type=float,
 
 args = parser.parse_args()
 
-# ====== CACHE UTILS ======
+# Cache Utils
 def load_cached_settings():
     if os.path.exists(CACHE_FILE):
         with open(CACHE_FILE, 'r') as f:
@@ -54,7 +54,7 @@ def save_cached_settings(settings):
     with open(CACHE_FILE, 'w') as f:
         json.dump(settings, f, indent=2)
 
-# ====== LOAD OR RESET SETTINGS ======
+# Load or Reset Settings
 if args.reset and os.path.exists(CACHE_FILE):
     os.remove(CACHE_FILE)
     print("Cache reset.")
@@ -64,7 +64,7 @@ cached = load_cached_settings()
 POST_ID = args.id or cached.get('post_id', 'gxvdih')
 MIN_INTENSITY = args.minimum if args.minimum is not None else cached.get('min_intensity', 0.2)
 MAX_UPVOTES = args.max_upvotes if args.max_upvotes is not None else cached.get('max_upvotes', 100)
-KEYWORD_LIST = args.keywords.split(",") if args.keywords else cached.get('keywords', ["knot", "puppy", "gock", "stupid", "choke"])
+KEYWORD_LIST = args.keywords.split(",") if args.keywords else cached.get('keywords', [])
 KEYWORD_INTENSITY_MULTIPLIER = args.multiplier if args.multiplier is not None else cached.get('multiplier', 1.5)
 
 save_cached_settings({
@@ -75,7 +75,7 @@ save_cached_settings({
     'multiplier': KEYWORD_INTENSITY_MULTIPLIER
 })
 
-# ====== REDDIT SETUP ======
+# Reddit Setup
 BUTTPLUG_SERVER_URL = config.get("buttplug_server_url", "ws://localhost:12345")
 REDDIT_CLIENT_ID = config["reddit_client_id"]
 REDDIT_SECRET = config["reddit_secret"]
@@ -90,27 +90,27 @@ reddit = praw.Reddit(
 
 seen_comment_ids = set()
 
-# ====== INTENSITY CALCULATION ======
+# Intensity Calcs
 def calculate_intensity(post_score, multiplier=1.0):
     scaled = post_score / MAX_UPVOTES
     base_intensity = MIN_INTENSITY + (1.0 - MIN_INTENSITY) * scaled
     return min(base_intensity * multiplier, 1.0)
 
-# ====== FETCH NEW COMMENTS ======
+# Fetch COmments
 def get_new_comments(submission, seen_ids):
     submission._fetch()
     submission.comments.replace_more(limit=0)
     comments = submission.comments.list()
     return [comment for comment in comments if comment.id not in seen_ids]
 
-# ====== VIBRATION ======
+# Vibrations
 async def send_vibration(client, intensity):
     if client.devices:
         device = client.devices[0]
         if device.actuators:
             actuator = device.actuators[0]
             await actuator.command(intensity)
-            print(f"💥 Sent vibration: {intensity:.2f} for {VIBRATION_DURATION:.1f}s")
+            print(f"Sent vibration: {intensity:.2f} for {VIBRATION_DURATION:.1f}s")
             await asyncio.sleep(VIBRATION_DURATION)
             await actuator.command(0.0)
         else:
@@ -118,7 +118,7 @@ async def send_vibration(client, intensity):
     else:
         print("No Buttplug devices connected.")
 
-# ====== MAIN LOOP ======
+# Main Loop
 async def main():
     client = Client("Intibot", ProtocolSpec.v3)
     connector = WebsocketConnector(BUTTPLUG_SERVER_URL, logger=client.logger)
@@ -169,7 +169,7 @@ async def main():
         await client.disconnect()
         print("Bot shut down.")
 
-# ====== RUN ======
+# Run
 if __name__ == "__main__":
     try:
         asyncio.run(main())
